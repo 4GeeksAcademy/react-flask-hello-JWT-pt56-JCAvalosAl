@@ -1,30 +1,43 @@
-// Import necessary components and functions from react-router-dom.
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop.jsx";
+import { BackendURL } from "./components/BackendURL.jsx";
 
-import {
-    createBrowserRouter,
-    createRoutesFromElements,
-    Route,
-} from "react-router-dom";
-import { Layout } from "./pages/Layout";
-import { Home } from "./pages/Home";
-import { Single } from "./pages/Single";
-import { Demo } from "./pages/Demo";
+import { Home } from "./pages/Home.jsx";
+import { Demo } from "./pages/Demo.jsx";
+import { Single } from "./pages/Single.jsx";
+import { Signup } from "./pages/Signup.jsx";
+import { Login } from "./pages/Login.jsx";
+import { Private } from "./pages/Private.jsx";
+import injectContext from "./store/appContext.js";
 
-export const router = createBrowserRouter(
-    createRoutesFromElements(
-    // CreateRoutesFromElements function allows you to build route elements declaratively.
-    // Create your routes here, if you want to keep the Navbar and Footer in all views, add your new routes inside the containing Route.
-    // Root, on the contrary, create a sister Route, if you have doubts, try it!
-    // Note: keep in mind that errorElement will be the default page when you don't get a route, customize that page to make your project more attractive.
-    // Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
+import { Navbar } from "./components/Navbar.jsx";
+import { Footer } from "./components/Footer.jsx";
 
-      // Root Route: All navigation will start from here.
-      <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
+const Layout = () => {
+  const basename = process.env.BASENAME || "";
 
-        {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
-        <Route path= "/" element={<Home />} />
-        <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
-        <Route path="/demo" element={<Demo />} />
-      </Route>
-    )
-);
+  if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
+
+  return (
+    <div>
+      <BrowserRouter basename={basename}>
+        <ScrollToTop>
+          <Navbar />
+          <Routes>
+            <Route element={<Home />} path="/" />
+            <Route element={<Demo />} path="/demo" />
+            <Route element={<Single />} path="/single/:theid" />
+            <Route element={<Signup />} path="/signup" />
+            <Route element={<Login />} path="/login" />
+            <Route element={<Private />} path="/private" />
+            <Route element={<h1>Not found!</h1>} path="*" />
+          </Routes>
+          <Footer />
+        </ScrollToTop>
+      </BrowserRouter>
+    </div>
+  );
+};
+
+export default injectContext(Layout);
